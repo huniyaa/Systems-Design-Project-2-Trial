@@ -3,77 +3,198 @@
 import express from 'express'
 const router = express.Router()
 
-// Set this to match the model name in your Prisma schema
-const model = 'cats'
-
 // Prisma lets NodeJS communicate with MongoDB
-// Let's import and initialize the Prisma client
-// See also: https://www.prisma.io/docs
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
+// ----- TRIPS -----
 
-// ----- CREATE (POST) -----
-// Create a new record for the configured model
-// This is the 'C' of CRUD
-router.post('/data', async (req, res) => {
+// Get all trips
+router.get('/trips', async (req, res) => {
     try {
-        const created = await prisma[model].create({
-            data: req.body
+        const trips = await prisma.trip.findMany({
+            include: {
+                cities: {
+                    include: {
+                        activities: true
+                    }
+                }
+            }
         })
-        res.status(201).send(created)
+        res.send(trips)
     } catch (err) {
-        console.error('POST /data error:', err)
-        res.status(500).send({ error: 'Failed to create record', details: err.message || err })
+        console.error('GET /trips error:', err)
+        res.status(500).send({ error: 'Failed to fetch trips', details: err.message })
     }
 })
 
-
-// ----- READ (GET) list ----- 
-router.get('/data', async (req, res) => {
+// Create a new trip
+router.post('/trips', async (req, res) => {
     try {
-        // fetch first 100 records from the database with no filter
-        const result = await prisma[model].findMany({
-            take: 100
-        })
-        res.send(result)
-    } catch (err) {
-        console.error('GET /data error:', err)
-        res.status(500).send({ error: 'Failed to fetch records', details: err.message || err })
-    }
-})
-
-
-
-// ----- findMany() with search ------- 
-// Accepts optional search parameter to filter by name field
-// See also: https://www.prisma.io/docs/orm/reference/prisma-client-reference#examples-7
-router.get('/search', async (req, res) => {
-    try {
-        // get search terms from query string, default to empty string
-        const searchTerms = req.query.terms || ''
-        // fetch the records from the database
-        const result = await prisma[model].findMany({
-            where: {
-                name: {
-                    contains: searchTerms,
-                    mode: 'insensitive'  // case-insensitive search
+        const { name, cities } = req.body
+        const trip = await prisma.trip.create({
+            data: {
+                name,
+                cities: {
+                    create: cities.map(city => ({
+                        name: city.name,
+                        transport: city.transport,
+                        startDate: city.startDate,
+                        endDate: city.endDate,
+                        posX: city.position?.x || 100,
+                        posY: city.position?.y || 300
+                    }))
                 }
             },
-            orderBy: { name: 'asc' },
-            take: 10
+            include: {
+                cities: {
+                    include: {
+                        activities: true
+                    }
+                }
+            }
         })
-        res.send(result)
+        res.status(201).send(trip)
     } catch (err) {
-        console.error('GET /search error:', err)
-        res.status(500).send({ error: 'Search failed', details: err.message || err })
+        console.error('POST /trips error:', err)
+        res.status(500).send({ error: 'Failed to create trip', details: err.message })
     }
 })
 
+// Delete a trip
+router.delete('/trips/:id', async (req, res) => {
+    try {
+        await prisma.trip.delete({
+            where: { id: req.params.id }
+        })
+        res.send({ success: true })
+    } catch (err) {
+        console.error('DELETE /trips error:', err)
+        res.status(500).send({ error: 'Failed to delete trip', details: err.message })
+    }
+})
 
+// ----- CITIES -----
 
+// Add a city to a trip
+router.post('/cities', async (req, res) => {
+    try {
+        const { tripId, name, transport, startDate, endDate, position } = req.body
+        const city = await prisma.city.create({
+            data: {
+                name,
+                transport,
+                startDate,
+                endDate,
+                posX: position?.x || 100,
+                posY: position?.y || 300,
+                tripId
+            },
+            include: {
+                activities: true
+            }
+        })
+        res.status(201).send(city)
+    } catch (err) {
+        console.error('POST /cities error:', err)
+        res.status(500).send({ error: 'Failed to create city', details: err.message })
+    }
+})
 
-// export the api routes for use elsewhere in our app 
-// (e.g. in index.js )
+// Update city position
+router.patch('/cities/:id', async (req, res) => {
+    try {
+        const { position } = req.body
+        const city = await prisma.city.update({
+            where: { id: req.params.id },
+            data: {
+                posX: position?.x || undefined,
+                posY: position?.y || undefined
+            },
+            include: {
+                activities: true
+            }
+        })
+        res.send(city)
+    } catch (err) {
+        console.error('PATCH /cities error:', err)
+        res.status(500).send({ error: 'Failed to update city', details: err.message })
+    }
+})
+
+// Delete a city
+router.delete('/cities/:id', async (req, res) => {
+    try {
+        await prisma.city.delete({
+            where: { id: req.params.id }
+        })
+        res.send({ success: true })
+    } catch (err) {
+        console.error('DELETE /cities error:', err)
+        res.status(500).send({ error: 'Failed to delete city', details: err.message })
+    }
+})
+
+// ----- ACTIVITIES -----
+
+// Add an activity to a city
+router.post('/activities', async (req, res) => {
+    try {
+        const { cityId, name, type, color, startTime, endTime, notes, date } = req.body
+        const activity = await prisma.activity.create({
+            data: {
+                name,
+                type,
+                color,
+                startTime,
+                endTime,
+                notes,
+                date,
+                cityId
+            }
+        })
+        res.status(201).send(activity)
+    } catch (err) {
+        console.error('POST /activities error:', err)
+        res.status(500).send({ error: 'Failed to create activity', details: err.message })
+    }
+})
+
+// Update an activity
+router.patch('/activities/:id', async (req, res) => {
+    try {
+        const { name, type, color, startTime, endTime, notes } = req.body
+        const activity = await prisma.activity.update({
+            where: { id: req.params.id },
+            data: {
+                name,
+                type,
+                color,
+                startTime,
+                endTime,
+                notes
+            }
+        })
+        res.send(activity)
+    } catch (err) {
+        console.error('PATCH /activities error:', err)
+        res.status(500).send({ error: 'Failed to update activity', details: err.message })
+    }
+})
+
+// Delete an activity
+router.delete('/activities/:id', async (req, res) => {
+    try {
+        await prisma.activity.delete({
+            where: { id: req.params.id }
+        })
+        res.send({ success: true })
+    } catch (err) {
+        console.error('DELETE /activities error:', err)
+        res.status(500).send({ error: 'Failed to delete activity', details: err.message })
+    }
+})
+
+// export the api routes for use elsewhere in our app
 export default router;
 

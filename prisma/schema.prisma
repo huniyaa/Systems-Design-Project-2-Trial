@@ -7,24 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model cats {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  adoptionDate   DateTime? @db.Date
-  birthDate      DateTime? @db.Date
-  breed          String?
-  declawed       Boolean?
-  description    String?
-  fosterDate     DateTime? @db.Date
-  fosterDuration Int?
-  location       String?
-  name           String?
-  neutered       Boolean?
-  sex            String?
-  primaryColor   String?
-  secondaryColor String?
-  playfulness    Int?
-  appetite       Int?
-  microchip      Int?
-  isAdopted      Boolean?
-  food           String?
+model Trip {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  cities City[]
+}
+
+model City {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  transport String
+  startDate String
+  endDate   String
+  posX      Float      @default(100)
+  posY      Float      @default(300)
+  tripId    String     @db.ObjectId
+  trip      Trip       @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  activities Activity[]
+}
+
+model Activity {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  type      String
+  color     String
+  startTime String
+  endTime   String
+  notes     String?
+  date      String
+  cityId    String   @db.ObjectId
+  city      City     @relation(fields: [cityId], references: [id], onDelete: Cascade)
 }
