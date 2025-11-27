@@ -1,4 +1,4 @@
-// Vercel serverless function handler
+// Vercel serverless function handler - API only
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import apiRoutes from '../routes/api.js';
@@ -11,7 +11,6 @@ prisma.$connect()
   .then(() => console.log('✓ Connected to MongoDB'))
   .catch(err => {
     console.error('✗ Failed to connect to MongoDB:', err.message);
-    process.exit(1);
   });
 
 // Enable CORS for all routes
@@ -24,9 +23,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-
-// Serve static files from /public folder
-app.use(express.static('../public'));
 
 // Enable express to parse JSON data
 app.use(express.json());
