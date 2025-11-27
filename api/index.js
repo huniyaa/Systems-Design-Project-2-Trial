@@ -27,12 +27,12 @@ prisma.$connect()
     console.error('✗ Failed to connect to MongoDB:', err.message);
   });
 
-// Mount API routes (strip /api prefix since Vercel routes to this file for /api/*)
-app.use('/', apiRoutes);
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK' });
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// Mount API routes - all routes will be prefixed with /api by Vercel
+app.use('/', apiRoutes);
 
 export default app;
