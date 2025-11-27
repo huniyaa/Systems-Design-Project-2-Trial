@@ -7,6 +7,11 @@ const router = express.Router()
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
+// Test endpoint
+router.get('/test', (req, res) => {
+  res.json({ status: 'API is working', timestamp: new Date().toISOString() })
+})
+
 // ----- TRIPS -----
 
 // Get all trips

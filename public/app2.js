@@ -24,9 +24,24 @@ const addActivityModal = document.getElementById("addActivityModal");
 // API Base URL
 const API_URL = window.location.origin + '/api';
 
+// Log startup info
+console.log('=== APP STARTUP ===');
+console.log('Window origin:', window.location.origin);
+console.log('API_URL:', API_URL);
+
 // Initialize App
 async function init() {
   console.log('Initializing app');
+  
+  // Test API connection
+  try {
+    const testResponse = await fetch(`${API_URL}/test`);
+    const testData = await testResponse.json();
+    console.log('✓ API test successful:', testData);
+  } catch (err) {
+    console.error('✗ API test failed:', err);
+  }
+  
   await loadTrips();
   console.log('Setting up event listeners');
   setupEventListeners();
