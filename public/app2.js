@@ -22,7 +22,7 @@ const addCityModal = document.getElementById("addCityModal");
 const addActivityModal = document.getElementById("addActivityModal");
 
 // API Base URL
-const API_URL = 'http://localhost:3001';
+const API_URL = window.location.origin;
 
 // Initialize App
 async function init() {
