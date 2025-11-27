@@ -4,8 +4,12 @@ const prisma = new PrismaClient();
 
 // Router for all API requests
 export default async function handler(req, res) {
-  const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+  // Extract the path after /api/
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const pathname = url.pathname;
   const path = pathname.replace('/api/', '').split('/')[0];
+  
+  console.log('Request:', req.method, pathname, 'Path:', path);
 
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
