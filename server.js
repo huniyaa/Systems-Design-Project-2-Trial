@@ -42,7 +42,13 @@ app.use(express.json())
 import apiRoutes from './routes/api.js'
 app.use('/api', apiRoutes)
 
-const port = 3001
-app.listen(port, () => {
+// Export app for Vercel serverless
+export default app;
+
+// Local development
+if (process.env.NODE_ENV !== 'production') {
+  const port = 3001
+  app.listen(port, () => {
     console.log(`Express is live at http://localhost:${port}`)
-})
+  })
+}
