@@ -1,7 +1,7 @@
 {
   "version": 2,
   "env": {
-    "DATABASE_URL": "@database_url"
+    "DATABASE_URL": "mongodb+srv://haniyahumayun_db_user:ovjSCXng4JAgYZHn@tripplan.s5zw5u1.mongodb.net/test"
   },
   "builds": [
     { "src": "api/server.js", "use": "@vercel/node" },
