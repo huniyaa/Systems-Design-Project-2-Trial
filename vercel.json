@@ -15,8 +15,12 @@
       "dest": "api/index.js"
     },
     {
-      "src": "/(.*)",
+      "src": "/(.+)",
       "dest": "public/$1"
+    },
+    {
+      "src": "/",
+      "dest": "public/index2.html"
     }
   ]
 }

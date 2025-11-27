@@ -1,4 +1,4 @@
-// API Handler for Vercel
+// API Handler for Vercel - Serverless Function
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import apiRoutes from '../routes/api.js';
@@ -6,7 +6,7 @@ import apiRoutes from '../routes/api.js';
 const prisma = new PrismaClient();
 const app = express();
 
-// Enable CORS for all routes
+// CORS Middleware
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -17,22 +17,26 @@ app.use((req, res, next) => {
   next();
 });
 
-// Enable express to parse JSON data
+// Body parser middleware
 app.use(express.json());
 
-// Test database connection
+// Database connection
 prisma.$connect()
   .then(() => console.log('✓ Connected to MongoDB'))
-  .catch(err => {
-    console.error('✗ Failed to connect to MongoDB:', err.message);
-  });
+  .catch(err => console.error('✗ Failed to connect to MongoDB:', err.message));
 
-// Health check endpoint
+// Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Mount API routes - all routes will be prefixed with /api by Vercel
+// API Routes
 app.use('/', apiRoutes);
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ error: 'Internal Server Error', details: err.message });
+});
 
 export default app;
