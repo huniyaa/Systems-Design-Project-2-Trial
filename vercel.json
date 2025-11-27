@@ -2,5 +2,12 @@
   "version": 2,
   "env": {
     "DATABASE_URL": "@database_url"
-  }
+  },
+  "builds": [
+    { "src": "api/server.js", "use": "@vercel/node" },
+    { "src": "public/**/*", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/server.js" }
+  ]
 }
