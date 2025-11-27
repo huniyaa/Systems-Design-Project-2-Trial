@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "public": "public",
   "env": {
     "DATABASE_URL": "@database_url"
   }

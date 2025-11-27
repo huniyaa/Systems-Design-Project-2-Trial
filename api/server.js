@@ -39,7 +39,7 @@ app.use(express.json())
 
 // Our API is defined in a separate module to keep things tidy.
 // Let's import our API endpoints and activate them.
-import apiRoutes from './routes/api.js'
+import apiRoutes from '../routes/api.js'
 app.use('/api', apiRoutes)
 
 // Export app for Vercel
