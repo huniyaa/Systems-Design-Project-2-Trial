@@ -27,7 +27,9 @@ app.get('/', (req, res) => {
 app.use(express.json());
 
 // Connect to database
-await prisma.$connect();
+prisma.$connect()
+  .then(() => console.log('✓ Connected to MongoDB'))
+  .catch(err => console.error('✗ Failed to connect to MongoDB:', err.message));
 
 // Import routes
 import apiRoutes from '../routes/api.js';
