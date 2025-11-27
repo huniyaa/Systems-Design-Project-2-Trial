@@ -65,12 +65,14 @@ async function loadTrips() {
 async function saveTrip(tripData) {
   try {
     console.log('Saving trip:', tripData);
+    console.log('API_URL:', API_URL);
     const response = await fetch(`${API_URL}/trips`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(tripData)
     });
     console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
     if (response.ok) {
       const newTrip = await response.json();
       console.log('Trip saved successfully:', newTrip);
@@ -79,9 +81,11 @@ async function saveTrip(tripData) {
     } else {
       const errorText = await response.text();
       console.error('API error:', response.status, errorText);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     }
   } catch (err) {
     console.error('Failed to save trip:', err);
+    throw err;
   }
 }
 
@@ -554,8 +558,10 @@ function handleSaveTrip() {
       // Re-enable button
       saveTripBtn.disabled = false;
       saveTripBtn.style.opacity = '1';
+      alert('Trip saved successfully!');
     }).catch(err => {
       console.error('Error saving trip:', err);
+      alert('Error saving trip: ' + err.message);
       // Re-enable button on error
       saveTripBtn.disabled = false;
       saveTripBtn.style.opacity = '1';
