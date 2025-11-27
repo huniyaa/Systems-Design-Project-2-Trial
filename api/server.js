@@ -3,7 +3,7 @@
 import express from 'express'
 // Import Prisma Client for database connection
 import { PrismaClient } from '@prisma/client'
-import apiRoutes from 'api/routes/api.js'
+import apiRoutes from './routes/api.js';
 
 // Initialize Prisma Client
 const prisma = new PrismaClient()
@@ -38,9 +38,6 @@ app.get('/', (req, res) => { res.redirect('/index2.html') })
 // Enable express to parse JSON data
 app.use(express.json())
 
-// Our API is defined in a separate module to keep things tidy.
-// Let's import our API endpoints and activate them.
-import apiRoutes from '../routes/api.js'
 app.use('/api', apiRoutes)
 
 // Export app for Vercel
