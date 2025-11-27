@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "setup": "npm install",
+    "build": "npx prisma generate",
     "start": "node --watch --env-file=.env server.js",
     "postinstall": "prisma generate"
   },
