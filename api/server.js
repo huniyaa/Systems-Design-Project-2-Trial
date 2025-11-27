@@ -3,7 +3,7 @@
 import express from 'express'
 // Import Prisma Client for database connection
 import { PrismaClient } from '@prisma/client'
-import apiRoutes from '../routes/api.js'
+import apiRoutes from './routes/api.js'
 
 // Initialize Prisma Client
 const prisma = new PrismaClient()
