@@ -29,9 +29,9 @@ app.use((req, res, next) => {
   next()
 })
 
-// Serve static files from /public folder (useful when running Node locally, optional on Vercel).
+// Serve static files from /public folder
 app.use(express.static('public'))
-// Define index2.html as the root explicitly (useful on Vercel, optional when running Node locally).
+// Define index2.html as the root explicitly
 app.get('/', (req, res) => { res.redirect('/index2.html') })
 
 // Enable express to parse JSON data
@@ -42,13 +42,7 @@ app.use(express.json())
 import apiRoutes from './routes/api.js'
 app.use('/api', apiRoutes)
 
-// Export the app for Vercel
-export default app
-
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-  const port = 3001
-  app.listen(port, () => {
+const port = 3001
+app.listen(port, () => {
     console.log(`Express is live at http://localhost:${port}`)
-  })
-}
+})

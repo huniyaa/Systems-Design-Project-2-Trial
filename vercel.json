@@ -1,20 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npm install && npx prisma generate",
-  "installCommand": "npm install",
   "env": {
     "DATABASE_URL": "@database_url"
-  },
-  "builds": [
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "api/index.js"
-    }
-  ]
+  }
 }
