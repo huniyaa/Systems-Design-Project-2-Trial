@@ -5,10 +5,16 @@
   "env": {
     "DATABASE_URL": "@database_url"
   },
-  "rewrites": [
-    { "source": "/api/test", "destination": "/api/test.js" },
-    { "source": "/api/trips", "destination": "/api/trips.js" },
-    { "source": "/api/cities", "destination": "/api/cities.js" },
-    { "source": "/api/activities", "destination": "/api/activities.js" }
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
   ]
 }
