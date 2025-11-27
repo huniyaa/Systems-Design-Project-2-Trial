@@ -4,5 +4,10 @@
   "installCommand": "npm install",
   "env": {
     "DATABASE_URL": "@database_url"
+  },
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 30
+    }
   }
 }
